@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+    helloooo.........
+
+    <form action="download" method="POST">
+        {% csrf_token %}
+        <input type="submit" name="gold" value="Gold" class="btn btn-success">
+        <input type="submit" name="silver" value="Silver" class="btn btn-success">
+    </form>
+</body>
+</html>

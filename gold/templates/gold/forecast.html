@@ -1,0 +1,73 @@
+{% extends 'C:\MyFiles\Projects\Mini Project\Deployment\Test\demo_django\web4\main\templates\index.html' %}
+
+{% load static %}
+
+
+{% block topbar %}
+
+    <ul class="nav nav-tabs nav-fill nav-justified justify-content-center">
+        <li class="nav-item">
+            <a class="nav-link active" aria-current="page" href="{% url 'gold-analysis' %}">Analysis</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="{% url 'gold-forecast' %}">Forecast</a>
+        </li>
+    </ul>
+
+{% endblock topbar %}
+
+{% block heading %}
+
+    <br>
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <h1 class="h3 mb-0 text-gray-800">GOLD</h1>
+    </div>
+
+{% endblock heading %}
+
+{% block content %}
+
+    <br>
+    <div class="card shadow">
+        <div>
+            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                <h6 class="m-0 font-weight-bold text-primary">RSI</h6>
+            </div>
+            <div class="card-body">
+                <div class="chart-area">
+                    <canvas id="rsi-line" data-url="{% url 'gold-forecast-api' %}"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Divider -->
+    <br>
+    <hr class="sidebar-divider">
+    <br>
+
+
+    <br>
+    <div class="card shadow">
+        <div>
+            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                <h6 class="m-0 font-weight-bold text-primary">Predicted price</h6>
+            </div>
+            <div class="card-body">
+                <div class="chart-area">
+                    <canvas id="predict-line" data-url="{% url 'gold-forecast-api' %}"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Divider -->
+    <br>
+    <hr class="sidebar-divider">
+    <br>
+
+    <!-- AJAX -->
+    <script src="{% static 'js/forecast.js' %}"></script>
+
+{% endblock content %}
+

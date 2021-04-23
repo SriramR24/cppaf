@@ -1,0 +1,125 @@
+{% extends 'C:\MyFiles\Projects\Mini Project\Deployment\Test\demo_django\web4\main\templates\index.html' %}
+
+{% load static %}
+
+
+{% block topbar %}
+
+    <ul class="nav nav-tabs nav-fill nav-justified justify-content-center">
+        <li class="nav-item">
+            <a class="nav-link active" aria-current="page" href="{% url 'gold-analysis' %}">Analysis</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="{% url 'gold-forecast' %}">Forecast</a>
+        </li>
+    </ul>
+
+{% endblock topbar %}
+
+{% block heading %}
+
+    <br>
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <h1 class="h3 mb-0 text-gray-800">GOLD</h1>
+    </div>
+
+{% endblock heading %}
+
+{% block lastprice %}
+    <div class="h5 mb-0 font-weight-bold text-gray-800">${{ last_price }}</div>
+{% endblock lastprice %}
+
+{% block commovolatile %}
+    <div class="h5 mb-0 font-weight-bold text-gray-800">{{commo_volatility}}</div>
+{% endblock commovolatile %}
+
+{% block dailyreturns %}
+    <div class="h5 mb-0 mr-3 font-weight-bold text-gray-800">{{ daily_returns }}</div>
+{% endblock dailyreturns %}
+
+{% block yearlyreturns %}
+    <div class="h5 mb-0 font-weight-bold text-gray-800">{{ yearly_returns }}</div>
+{% endblock yearlyreturns %}
+
+{% block content %}
+
+    <br>
+    <div class="card shadow">
+        <div>
+            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                <h6 class="m-0 font-weight-bold text-primary">Close price</h6>
+            </div>
+            <div class="card-body">
+                <div class="chart-area">
+                    <canvas id="close-line" data-url="{% url 'gold-analysis-api' %}"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Divider -->
+    <br>
+    <hr class="sidebar-divider">
+    <br>
+
+    <div class="card shadow">
+        <div>
+            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                <h6 class="m-0 font-weight-bold text-primary">Volume</h6>
+            </div>
+            <div class="card-body">
+                <div class="chart-area">
+                    <canvas id="volume-bar" data-url="{% url 'gold-analysis-api' %}"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Divider -->
+    <br>
+    <hr class="sidebar-divider">
+    <br>
+
+    <div class="card shadow">
+        <div>
+            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                <h6 class="m-0 font-weight-bold text-primary">Volatility</h6>
+            </div>
+            <div class="card-body">
+                <div class="chart-area">
+                    <canvas id="volatile-line" data-url="{% url 'gold-analysis-api' %}"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Divider -->
+    <br>
+    <hr class="sidebar-divider">
+    <br>
+
+    <div class="card shadow">
+        <div>
+            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                <h6 class="m-0 font-weight-bold text-primary">Cumulative Returns</h6>
+            </div>
+            <div class="card-body">
+                <div class="chart-area">
+                    <canvas id="cumulative-line" data-url="{% url 'gold-analysis-api' %}"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Divider -->
+    <br>
+    <hr class="sidebar-divider">
+    <br>
+
+
+    <!-- AJAX -->
+    <script src="{% static 'js/analysis.js' %}"></script>
+
+{% endblock content %}
+
+
