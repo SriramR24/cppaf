@@ -1,0 +1,137 @@
+{% extends 'C:\MyFiles\Projects\Mini Project\Deployment\Test\demo_django\web4\main\templates\index.html' %}
+
+{% load static %}
+
+
+{% block topbar %}
+
+    <ul class="nav nav-tabs nav-fill nav-justified justify-content-center">
+        <li class="nav-item">
+            <a class="nav-link active" aria-current="page" href="{% url 'oil-analysis' %}">Analysis</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="{% url 'oil-forecast' %}">Forecast</a>
+        </li>
+    </ul>
+
+{% endblock topbar %}
+
+{% block heading %}
+
+    <br>
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <h1 class="h3 mb-0 text-gray-800">CRUDE OIL</h1>
+    </div>
+
+{% endblock heading %}
+
+{% block price1 %}
+    <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+        Last Price
+    </div>
+    <div class="h5 mb-0 font-weight-bold text-gray-800">${{ last_price }}</div>
+{% endblock price1 %}
+
+{% block price2 %}
+    <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+        Commodity Volatility
+    </div>
+    <div class="h5 mb-0 font-weight-bold text-gray-800">{{commo_volatility}}</div>
+{% endblock price2 %}
+
+{% block price3 %}
+    <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
+        Daily Returns
+    </div>
+    <div class="h5 mb-0 mr-3 font-weight-bold text-gray-800">{{ daily_returns }}</div>
+{% endblock price3 %}
+
+{% block price4 %}
+    <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
+        Yearly Returns
+    </div>
+    <div class="h5 mb-0 font-weight-bold text-gray-800">{{ yearly_returns }}</div>
+{% endblock price4 %}
+
+{% block content %}
+
+    <br>
+    <div class="card shadow">
+        <div>
+            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                <h6 class="m-0 font-weight-bold text-primary">Close price</h6>
+            </div>
+            <div class="card-body">
+                <div class="chart-area">
+                    <canvas id="close-line" data-url="{% url 'oil-analysis-api' %}"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Divider -->
+    <br>
+    <hr class="sidebar-divider">
+    <br>
+
+    <div class="card shadow">
+        <div>
+            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                <h6 class="m-0 font-weight-bold text-primary">Volume</h6>
+            </div>
+            <div class="card-body">
+                <div class="chart-area">
+                    <canvas id="volume-bar" data-url="{% url 'oil-analysis-api' %}"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Divider -->
+    <br>
+    <hr class="sidebar-divider">
+    <br>
+
+    <div class="card shadow">
+        <div>
+            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                <h6 class="m-0 font-weight-bold text-primary">Volatility</h6>
+            </div>
+            <div class="card-body">
+                <div class="chart-area">
+                    <canvas id="volatile-line" data-url="{% url 'oil-analysis-api' %}"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Divider -->
+    <br>
+    <hr class="sidebar-divider">
+    <br>
+
+    <div class="card shadow">
+        <div>
+            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                <h6 class="m-0 font-weight-bold text-primary">Cumulative Returns</h6>
+            </div>
+            <div class="card-body">
+                <div class="chart-area">
+                    <canvas id="cumulative-line" data-url="{% url 'oil-analysis-api' %}"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Divider -->
+    <br>
+    <hr class="sidebar-divider">
+    <br>
+
+
+    <!-- AJAX -->
+    <script src="{% static 'js/analysis.js' %}"></script>
+
+{% endblock content %}
+
+
