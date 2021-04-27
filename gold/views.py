@@ -1,26 +1,20 @@
-from django.shortcuts import render
-from requests import Response
-from tensorflow import keras
 import numpy as np
-from sklearn.preprocessing import StandardScaler
 import pandas as pd
-from datetime import datetime
-import matplotlib.pyplot as plt
-from django.http import HttpResponse
+from django.shortcuts import render
 from django.http import JsonResponse
-import json
 
-file = open("gold/ML_model/variables/dataset_train", "rb")
-dataset_train = np.load(file)
 
-file = open("gold/ML_model/variables/X_train", "rb")
-X_train = np.load(file)
-
-file = open("gold/ML_model/variables/n_past", "rb")
-n_past = np.load(file)
-
-file = open("gold/ML_model/variables/training_set", "rb")
-training_set = np.load(file)
+# file = open("gold/ML_model/variables/dataset_train", "rb")
+# dataset_train = np.load(file)
+#
+# file = open("gold/ML_model/variables/X_train", "rb")
+# X_train = np.load(file)
+#
+# file = open("gold/ML_model/variables/n_past", "rb")
+# n_past = np.load(file)
+#
+# file = open("gold/ML_model/variables/training_set", "rb")
+# training_set = np.load(file)
 
 dataset = pd.read_csv('gold/ML_model/dataset.csv')
 
@@ -30,6 +24,8 @@ volatile = volatile.set_index('Date')
 daily_simple_returns = volatile[['Adj Close']].pct_change(1)
 daily_simple_returns = daily_simple_returns.dropna()
 
+
+        # ANALYSIS
 
 def analysis(request):
 
@@ -46,7 +42,7 @@ def analysis(request):
     daily_mean_simple_returns = "{0:.5f}".format(float(daily_simple_returns.mean()))
 
     # Yearly returns
-    yearly_mean_simple_returns = float(daily_mean_simple_returns) * 253
+    yearly_mean_simple_returns = "{0:.5f}".format(float(daily_mean_simple_returns) * 253)
 
     context = {
         'last_price': price,
@@ -62,7 +58,7 @@ def analysis_api(request):
     # Close price - Line chart
     close_prices = dataset[['Date', 'Close']]
     close_prices_labels = close_prices['Date'].tolist()
-    close_prices_chartLabels = "Gold"
+    close_prices_chartLabels = "Close price"
     close_prices_chartData = close_prices['Close'].tolist()
 
     # Volume - Bar chart
@@ -109,24 +105,100 @@ def analysis_api(request):
     return JsonResponse(data, safe=False)
 
 
+        # FORECAST
+
 def forecast( request ):
-    return render(request, "gold/forecast.html")
+
+    # Last Price
+    last_price = dataset['Close'].tail(1)
+    price = "{0:.2f}".format(float(last_price.values))
+
+    file = open("gold/ML_model/variables/PREDICTIONS_FUTURE", "rb")
+    PREDICTIONS_FUTURE = np.load(file)
+    print(PREDICTIONS_FUTURE, len(PREDICTIONS_FUTURE))
+
+    # Price after 30/60 days
+    price_after_30_days = "{0:.2f}".format(float(PREDICTIONS_FUTURE[29]))
+    price_after_60_days = "{0:.2f}".format(float(PREDICTIONS_FUTURE[59]))
+
+    # %change
+    x = np.reshape(PREDICTIONS_FUTURE, (60))
+    list_series = pd.Series(x).pct_change(1)
+    per_change = "{0:.5f}".format(list_series.loc[59])
+
+    context = {
+        'last_price': price,
+        'price_after_30_days': price_after_30_days,
+        'price_after_60_days': price_after_60_days,
+        'per_change': per_change,
+    }
+
+    return render(request, "gold/forecast.html", context=context)
 
 
 def forecast_api( request ):
 
-    dataset = pd.read_csv('gold/ML_model/dataset.csv')
-    print(dataset)
+    # PREDICTION
+    # PREDICTIONS_FUTURE = get_predictions_data()
+    # predict_chartLabels = PREDICTIONS_FUTURE['Date'].tolist()
+    # predict_chartData = PREDICTIONS_FUTURE['Open'].tolist()
+
+    # RSI
+    new_df = get_rsi_data()
+
+    rsi_chartLabels = new_df['Date'].tolist()
+    rsi_chartData = new_df['RSI'].tolist()
+
+    # MACD
+    MACD_df = get_macd_data()
+
+    macd_chartLabels = MACD_df['Date'].tolist()
+    macd_chartData = MACD_df['MACD'].tolist()
+    signal_chartData = MACD_df['Signal'].tolist()
+
+    # BUY/SELL SIGNALS
+    buysell_df = get_buysell_data(MACD_df)
+
+    buysell_chartLabels = buysell_df['Date'].tolist()
+    close_chartData = buysell_df['Close'].tolist()
+    buy_chartData = buysell_df['Buy_signals'].fillna("null").tolist()
+    sell_chartData = buysell_df['Sell_signals'].fillna("null").tolist()
+
+    # Response
+    data = {
+        # 'predict_data': {
+        #     'labels': predict_chartLabels,
+        #     'data': predict_chartData,
+        # },
+        'rsi_data': {
+            'labels': rsi_chartLabels,
+            'data': rsi_chartData,
+        },
+        'macd_data': {
+            'labels': macd_chartLabels,
+            'data': {
+                'macd': macd_chartData,
+                'signal': signal_chartData,
+            },
+        },
+        'buysell_data': {
+            'labels': buysell_chartLabels,
+            'data': {
+                'close': close_chartData,
+                'buy': buy_chartData,
+                'sell': sell_chartData,
+            },
+        },
+    }
+    return JsonResponse(data, safe=False)
 
 
-            # RSI
+def get_rsi_data():
 
     # Get the difference in price from the previous day
     delta = dataset['Adj Close'].diff(1)
-    print(f"Delta = {delta}")
     # Get rid of NaN
     delta = delta.dropna()
-    print(f"Delta = {delta}")
 
     # Get the positive gains (up) and the negative gains (down)
     up = delta.copy()
@@ -146,7 +218,6 @@ def forecast_api( request ):
     RS = AVG_Gain / AVG_Loss
     # Calculate the RSI
     RSI = 100.0 - (100.0 / (1.0 + RS))
-    print(f"RSI = {RSI}")
 
     # Create a new DF
     new_df = pd.DataFrame()
@@ -155,77 +226,112 @@ def forecast_api( request ):
     new_df['RSI'] = RSI
     new_df = new_df.set_index(pd.DatetimeIndex(new_df['Date'].values))
     mean_value = new_df['RSI'].mean()
-    print(f"Mean = {mean_value}")
     new_df['RSI'].fillna(value=mean_value, inplace=True)
-    print(f"New_df = {new_df}")
 
-    rsi_chartLabels = new_df['Date'].tolist()
-    rsi_chartData = new_df['RSI'].tolist()
-
-            # END OF RSI
+    return new_df
 
 
-            # PREDICTION
+def get_macd_data():
 
-    file = open("gold/ML_model/variables/n_future", "rb")
-    n_future = np.load(file)
-    n_future = int(n_future)
+    # Calc the short term expon. mov. avg. (EMA)
+    ShortEMA = dataset.Close.ewm(span=12, adjust=False).mean()
+    # Calc the long term expon. mov. avg. (EMA)
+    LongEMA = dataset.Close.ewm(span=26, adjust=False).mean()
+    # Calc the MACD line
+    MACD = ShortEMA - LongEMA
+    # Calc the signal line
+    signal = MACD.ewm(span=9, adjust=False).mean()
+    MACD_df = pd.DataFrame()
+    MACD_df['Date'] = dataset['Date']
+    MACD_df['MACD'] = MACD
+    MACD_df['Signal'] = signal
 
-    model_new = keras.models.load_model('gold/ML_model/mymodel')
+    return MACD_df
 
-    # Perform predictions
-    predictions_future = model_new.predict(X_train[-n_future:])
-    predictions_train = model_new.predict(X_train[n_past:])
 
-    sc = StandardScaler()
-    training_set_scaled = sc.fit_transform(training_set)
+def get_buysell_data(df):
 
-    sc_predict = StandardScaler()
-    sc_predict.fit_transform(training_set[:, 0:1])
+    df['Close'] = dataset['Close']
 
-    # Transform the predictions
-    y_pred_future = sc_predict.inverse_transform(predictions_future)
-    y_pred_train = sc_predict.inverse_transform(predictions_train)
+    def buy_sell(signal):
+        buy = []
+        sell = []
+        flag = -1
 
-    # Get the Date column
-    dataset = pd.read_csv('gold/ML_model/dataset.csv')
-    cols = list(dataset)[1:6]
-    datelist_train = list(dataset['Date'])
-    dataset = dataset[cols].astype(str)
-    for i in cols:
-        for j in range(0, len(dataset)):
-            dataset[i][j] = dataset[i][j].replace(',', '')
+        for i in range(0, len(signal)):
+            if signal['MACD'][i] > signal['Signal'][i]:
+                sell.append(np.nan)
+                if flag != 1:
+                    buy.append(signal['Close'][i])
+                    flag = 1
+                else:
+                    buy.append(np.nan)
+            elif signal['MACD'][i] < signal['Signal'][i]:
+                buy.append(np.nan)
+                if flag != 0:
+                    sell.append(signal['Close'][i])
+                    flag = 0
+                else:
+                    sell.append(np.nan)
+            else:
+                buy.append(np.nan)
+                sell.append(np.nan)
 
-    dataset = dataset.astype(float)
+        return (buy, sell)
 
-    datelist_future = pd.date_range(datelist_train[-1], periods=n_future, freq='1d').tolist()
+    # Create a buy and sell column
+    a = buy_sell(df)
+    df['Buy_signals'] = a[0]
+    df['Sell_signals'] = a[1]
 
-    # Convert Pandas Timestamp to Datetime object (for transformation) --> FUTURE
-    datelist_future_ = []
-    for this_timestamp in datelist_future:
-        datelist_future_.append(this_timestamp.date())
+    return df
 
-    PREDICTIONS_FUTURE = pd.DataFrame(y_pred_future, columns=['Open']).set_index(pd.Series(datelist_future))
 
-    PREDICTIONS_FUTURE.reset_index(inplace=True)
-    PREDICTIONS_FUTURE.rename(columns={'index': 'Date'}, inplace=True)
-    # PREDICTIONS_FUTURE.Date = pd.to_datetime(PREDICTIONS_FUTURE.Date, format='%Y-%m-%d')
+# def get_predictions_data():
+#
+#     file = open("gold/ML_model/variables/n_future", "rb")
+#     n_future = np.load(file)
+#     n_future = int(n_future)
+#
+#     model_new = keras.models.load_model('gold/ML_model/mymodel')
+#
+#     # Perform predictions
+#     predictions_future = model_new.predict(X_train[-n_future:])
+#     predictions_train = model_new.predict(X_train[n_past:])
+#
+#     sc = StandardScaler()
+#     training_set_scaled = sc.fit_transform(training_set)
+#
+#     sc_predict = StandardScaler()
+#     sc_predict.fit_transform(training_set[:, 0:1])
+#
+#     # Transform the predictions
+#     y_pred_future = sc_predict.inverse_transform(predictions_future)
+#     y_pred_train = sc_predict.inverse_transform(predictions_train)
+#
+#     # Get the Date column
+#     dataset = pd.read_csv('gold/ML_model/dataset.csv')
+#     cols = list(dataset)[1:6]
+#     datelist_train = list(dataset['Date'])
+#     dataset = dataset[cols].astype(str)
+#     for i in cols:
+#         for j in range(0, len(dataset)):
+#             dataset[i][j] = dataset[i][j].replace(',', '')
+#
+#     dataset = dataset.astype(float)
+#
+#     datelist_future = pd.date_range(datelist_train[-1], periods=n_future, freq='1d').tolist()
+#
+#     # Convert Pandas Timestamp to Datetime object (for transformation) --> FUTURE
+#     datelist_future_ = []
+#     for this_timestamp in datelist_future:
+#         datelist_future_.append(this_timestamp.date())
+#
+#     PREDICTIONS_FUTURE = pd.DataFrame(y_pred_future, columns=['Open']).set_index(pd.Series(datelist_future))
+#
+#     PREDICTIONS_FUTURE.reset_index(inplace=True)
+#     PREDICTIONS_FUTURE.rename(columns={'index': 'Date'}, inplace=True)
+#
+#     return PREDICTIONS_FUTURE
 
-            # END OF PREDICTION
 
-            # Response
-
-    predict_chartLabels = PREDICTIONS_FUTURE['Date'].tolist()
-    predict_chartData = PREDICTIONS_FUTURE['Open'].tolist()
-
-    data = {
-        'rsi_data': {
-            'labels': rsi_chartLabels,
-            'data': rsi_chartData,
-        },
-        'predict_data': {
-            'labels': predict_chartLabels,
-            'data': predict_chartData,
-        },
-    }
-    return JsonResponse(data, safe=False)

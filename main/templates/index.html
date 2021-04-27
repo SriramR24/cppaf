@@ -84,7 +84,7 @@
             </li>
 
             <li class="nav-item">
-                <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseUtilities"
+                <a class="nav-link collapsed" href="{% url 'oil-analysis' %}" data-toggle="collapse" data-target="#collapseUtilities"
                     aria-expanded="true" aria-controls="collapseUtilities">
 <!--                    <i class="fas fa-fw fa-wrench"></i>-->
                     <span>Crude Oil</span>
@@ -92,7 +92,7 @@
             </li>
 
             <li class="nav-item">
-                <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseUtilities"
+                <a class="nav-link collapsed" href="{% url 'gas-analysis' %}" data-toggle="collapse" data-target="#collapseUtilities"
                     aria-expanded="true" aria-controls="collapseUtilities">
 <!--                    <i class="fas fa-fw fa-wrench"></i>-->
                     <span>Natural Gas</span>
@@ -136,10 +136,8 @@
                                 <div class="card-body">
                                     <div class="row no-gutters align-items-center">
                                         <div class="col mr-2">
-                                            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
-                                                Last Price</div>
-                                            {% block lastprice %}
-                                            {% endblock lastprice %}
+                                            {% block price1 %}
+                                            {% endblock price1 %}
                                         </div>
                                         <div class="col-auto">
 <!--                                            <i class="fas fa-calendar fa-2x text-gray-300"></i>-->
@@ -154,10 +152,8 @@
                                 <div class="card-body">
                                     <div class="row no-gutters align-items-center">
                                         <div class="col mr-2">
-                                            <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
-                                                Commodity Volatility</div>
-                                            {% block commovolatile %}
-                                            {% endblock commovolatile %}
+                                            {% block price2 %}
+                                            {% endblock price2 %}
                                         </div>
                                         <div class="col-auto">
 <!--                                            <i class="fas fa-dollar-sign fa-2x text-gray-300"></i>-->
@@ -172,10 +168,8 @@
                                 <div class="card-body">
                                     <div class="row no-gutters align-items-center">
                                         <div class="col mr-2">
-                                            <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
-                                                Daily Returns</div>
-                                            {% block dailyreturns %}
-                                            {% endblock dailyreturns %}
+                                            {% block price3 %}
+                                            {% endblock price3 %}
                                         </div>
                                         <div class="col-auto">
 <!--                                            <i class="fas fa-dollar-sign fa-2x text-gray-300"></i>-->
@@ -191,10 +185,8 @@
                                 <div class="card-body">
                                     <div class="row no-gutters align-items-center">
                                         <div class="col mr-2">
-                                            <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
-                                                Yearly Returns</div>
-                                                {% block yearlyreturns %}
-                                                {% endblock yearlyreturns %}
+                                                {% block price4 %}
+                                                {% endblock price4 %}
                                         </div>
                                         <div class="col-auto">
 <!--                                            <i class="fas fa-comments fa-2x text-gray-300"></i>-->

@@ -215,7 +215,7 @@ automotive:
     - car-side
     - caravan
     - charging-station
-    - gas-pump
+    - oil-pump
     - motorcycle
     - oil-can
     - shuttle-van
@@ -840,7 +840,7 @@ energy:
     - fan
     - fire
     - fire-alt
-    - gas-pump
+    - oil-pump
     - industry
     - leaf
     - lightbulb
@@ -2274,7 +2274,7 @@ status:
     - file-alt
     - folder
     - folder-open
-    - gas-pump
+    - oil-pump
     - info
     - info-circle
     - lightbulb

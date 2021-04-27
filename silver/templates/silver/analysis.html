@@ -25,21 +25,33 @@
 
 {% endblock heading %}
 
-{% block lastprice %}
+{% block price1 %}
+    <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+        Last Price
+    </div>
     <div class="h5 mb-0 font-weight-bold text-gray-800">${{ last_price }}</div>
-{% endblock lastprice %}
+{% endblock price1 %}
 
-{% block commovolatile %}
+{% block price2 %}
+    <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+        Commodity Volatility
+    </div>
     <div class="h5 mb-0 font-weight-bold text-gray-800">{{commo_volatility}}</div>
-{% endblock commovolatile %}
+{% endblock price2 %}
 
-{% block dailyreturns %}
+{% block price3 %}
+    <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
+        Daily Returns
+    </div>
     <div class="h5 mb-0 mr-3 font-weight-bold text-gray-800">{{ daily_returns }}</div>
-{% endblock dailyreturns %}
+{% endblock price3 %}
 
-{% block yearlyreturns %}
+{% block price4 %}
+    <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
+        Yearly Returns
+    </div>
     <div class="h5 mb-0 font-weight-bold text-gray-800">{{ yearly_returns }}</div>
-{% endblock yearlyreturns %}
+{% endblock price4 %}
 
 {% block content %}
 

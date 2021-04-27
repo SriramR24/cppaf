@@ -8,4 +8,6 @@ urlpatterns = [
     path('', views.home),
     path('gold/', include('gold.urls')),
     path('silver/', include('silver.urls')),
+    path('oil/', include('oil.urls')),
+    path('gas/', include('gas.urls')),
 ]

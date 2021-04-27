@@ -34,6 +34,8 @@ INSTALLED_APPS = [
     'main',
     'gold',
     'silver',
+    'oil',
+    'gas',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',

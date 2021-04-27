@@ -25,7 +25,54 @@
 
 {% endblock heading %}
 
+{% block price1 %}
+    <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+        Last Price
+    </div>
+    <div class="h5 mb-0 font-weight-bold text-gray-800">${{ last_price }}</div>
+{% endblock price1 %}
+
+{% block price2 %}
+    <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+        Price after 30 days
+    </div>
+    <div class="h5 mb-0 font-weight-bold text-gray-800">${{ price_after_30_days }}</div>
+{% endblock price2 %}
+
+{% block price3 %}
+    <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
+        Price after 60 days
+    </div>
+    <div class="h5 mb-0 mr-3 font-weight-bold text-gray-800">${{ price_after_60_days }}</div>
+{% endblock price3 %}
+
+{% block price4 %}
+    <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
+        %change
+    </div>
+    <div class="h5 mb-0 font-weight-bold text-gray-800">{{ per_change }}%</div>
+{% endblock price4 %}
+
 {% block content %}
+
+<!--    <br>-->
+<!--    <div class="card shadow">-->
+<!--        <div>-->
+<!--            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">-->
+<!--                <h6 class="m-0 font-weight-bold text-primary">Predicted price</h6>-->
+<!--            </div>-->
+<!--            <div class="card-body">-->
+<!--                <div class="chart-area">-->
+<!--                    <canvas id="predict-line" data-url="{% url 'gold-forecast-api' %}"></canvas>-->
+<!--                </div>-->
+<!--            </div>-->
+<!--        </div>-->
+<!--    </div>-->
+
+<!--    &lt;!&ndash; Divider &ndash;&gt;-->
+<!--    <br>-->
+<!--    <hr class="sidebar-divider">-->
+<!--    <br>-->
 
     <br>
     <div class="card shadow">
@@ -46,16 +93,15 @@
     <hr class="sidebar-divider">
     <br>
 
-
     <br>
     <div class="card shadow">
         <div>
             <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-                <h6 class="m-0 font-weight-bold text-primary">Predicted price</h6>
+                <h6 class="m-0 font-weight-bold text-primary">MACD</h6>
             </div>
             <div class="card-body">
                 <div class="chart-area">
-                    <canvas id="predict-line" data-url="{% url 'gold-forecast-api' %}"></canvas>
+                    <canvas id="macd-line" data-url="{% url 'gold-forecast-api' %}"></canvas>
                 </div>
             </div>
         </div>
@@ -65,6 +111,26 @@
     <br>
     <hr class="sidebar-divider">
     <br>
+
+    <br>
+    <div class="card shadow">
+        <div>
+            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                <h6 class="m-0 font-weight-bold text-primary">Buy/Sell signals</h6>
+            </div>
+            <div class="card-body">
+                <div class="chart-area">
+                    <canvas id="buysell-line" data-url="{% url 'gold-forecast-api' %}"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Divider -->
+    <br>
+    <hr class="sidebar-divider">
+    <br>
+
 
     <!-- AJAX -->
     <script src="{% static 'js/forecast.js' %}"></script>
